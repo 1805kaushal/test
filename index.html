@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parmar Construction PPE & Attendance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="letterhead">
+            <img src="Parmar_construction_logo.png" alt="Parmar Construction Logo">
+            <div class="letterhead-info">
+                <h2>Parmar Construction</h2>
+                <p>PPE & Attendance Form</p>
+            </div>
+        </div>
+
+        <!-- Login Section -->
+        <div id="login-container">
+            <h1>Login</h1>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button onclick="login()">Login</button>
+        </div>
+
+        <!-- Form Section -->
+        <div id="form-container" class="hidden">
+            <h2>Attendance & PPE Checklist</h2>
+            <input type="date" id="date" required>
+
+            <select id="site" required>
+                <option value="">Select Site</option>
+                <option value="WRM">WRM</option>
+                <option value="NBM">NBM</option>
+                <option value="R&D SCS">R&D SCS C</option>
+                <option value="MED">MED</option>
+            </select>
+
+            <!-- Worker List and Add Custom Button -->
+            <div id="worker-list"></div>
+            <button type="button" onclick="addCustomWorker()">+ Add Worker</button>
+
+            <!-- File Uploads -->
+            <div class="file-upload">
+                <label for="toolbox_pdf">Toolbox Meeting PDF (required):</label>
+                <input type="file" id="toolbox_pdf" accept="application/pdf" required>
+
+                <label for="work_permit_pdf">Work Permit PDF (required):</label>
+                <input type="file" id="work_permit_pdf" accept="application/pdf" required>
+            </div>
+
+            <button onclick="submitForm()">Submit</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'admin' && password === 'parmar299') {
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('form-container').classList.remove('hidden');
+            } else {
+                alert('Invalid login credentials!');
+            }
+        }
+
+        function loadWorkers() {
+            const site = document.getElementById('site').value;
+            const workerList = document.getElementById('worker-list');
+            workerList.innerHTML = ''; // Clear existing table
+
+            let workers = [];
+            if (site === 'WRM') {
+                workers = ["Akash Hembrom", "Anumay Mistry", "Kalicharan Gorai", "Kartik Namata", "Sanjay Gope", "Saroj Kumar Murmu"];
+            } else if (site === 'NBM') {
+                workers = [" Anurag Dhan", "Harish Singh Sardar", "Janmajay Kumar Singh", "Jay Narayan Singh", "Lakhan Purty", "Mahadeb Mahato", " Raj Kishore Patro", "Shiva Kumar Sahare","Vicky Kumar Mishra" ];
+            } else if (site === 'R&D SCS') {
+                workers = ["Arjun Gope", "Devendra Kumar Singh", "Ekadashi Sen","Jadu Mandal", "Lallu Kumar", "Laxmikant Choudhary", "Niranjan Gope", "Rahit Ghatuary", "Rajendar Kumar Rajak", "Sunil Mishra"];
+            } else if (site === 'MED') {
+                workers = ["Ajit Kumar Sharma", "Dilip Kumar Mahato", "Jhujhar Murmu","Kalikinkar Bera", "Gangarm Samad", "Vishnu Kumar", "Vishal Kumar"];
+
+            if (workers.length > 0) {
+                let table = '<table><tr><th>Name</th><th>Attendance</th><th>PPE Worn</th></tr>';
+                workers.forEach(worker => {
+                    table += `<tr>
+                                <td>${worker}</td>
+                                <td><input type="checkbox" class="attendance"></td>
+                                <td><input type="checkbox" class="ppe"></td>
+                              </tr>`;
+                });
+                table += '</table>';
+                workerList.innerHTML = table;
+            }
+        }
+
+        function addCustomWorker() {
+            const workerList = document.getElementById('worker-list');
+            let table = workerList.querySelector('table');
+
+            if (!table) {
+                table = document.createElement('table');
+                table.innerHTML = '<tr><th>Name</th><th>Attendance</th><th>PPE Worn</th></tr>';
+                workerList.appendChild(table);
+            }
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Enter name" required></td>
+                <td><input type="checkbox" class="attendance"></td>
+                <td><input type="checkbox" class="ppe"></td>
+            `;
+            table.appendChild(newRow);
+        }
+
+        document.getElementById('site').addEventListener('change', loadWorkers);
+
+        function submitForm() {
+            const date = document.getElementById('date').value;
+            const site = document.getElementById('site').value;
+            const toolboxPdf = document.getElementById('toolbox_pdf').files.length;
+            const workPermitPdf = document.getElementById('work_permit_pdf').files.length;
+
+            if (!date || !site || !toolboxPdf || !workPermitPdf) {
+                alert('Please fill in all required fields and upload the necessary files.');
+                return;
+            }
+
+            const customNames = Array.from(document.querySelectorAll('#worker-list input[type="text"]'))
+                                     .map(input => input.value.trim())
+                                     .filter(name => name !== '');
+
+            console.log("Custom Workers:", customNames);
+
+            alert('Form submitted successfully! Your submission is complete. Thank you for your response!');
+        }
+    </script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+
+<script>
+  // Your Firebase config (replace placeholders)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+</script>
+</body>
+</html>
