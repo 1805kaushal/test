@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parmar Construction PPE & Attendance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="letterhead">
+            <img src="Parmar_construction_logo.png" alt="Parmar Construction Logo">
+            <div class="letterhead-info">
+                <h2>Parmar Construction</h2>
+                <p>PPE & Attendance Form</p>
+            </div>
+        </div>
+        <div id="login-container">
+            <h1>Login</h1>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button onclick="login()">Login</button>
+        </div>
+        <div id="form-container" class="hidden">
+            <h2>Attendance & PPE Checklist</h2>
+            <input type="date" id="date" required>
+            <select id="site" required>
+                <option value="">Select Site</option>
+                <option value="WRM">WRM</option>
+                <option value="NBM">NBM</option>
+                <option value="R&D SCS">R&D SCS C</option>
+                <option value="MED">MED C</option>
+            </select>
+            <div id="worker-list"></div>
+            <div class="file-upload">
+                <label for="toolbox_pdf">Toolbox Meeting PDF (required):</label>
+                <input type="file" id="toolbox_pdf" accept="application/pdf" required>
+
+                <label for="work_permit_pdf">Work Permit PDF (required):</label>
+                <input type="file" id="work_permit_pdf" accept="application/pdf" required>
+            </div>
+            <button onclick="submitForm()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'admin' && password === 'parmar299') {
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('form-container').classList.remove('hidden');
+            } else {
+                alert('Invalid login credentials!');
+            }
+        }
+
+        function loadWorkers() {
+            const site = document.getElementById('site').value;
+            const workerList = document.getElementById('worker-list');
+            workerList.innerHTML = '';
+
+            let workers = [];
+            if (site === 'WRM') {
+                workers = ["Akash Hembrom", "Anumay Mistry", "Kalicharan Gorai", "Kartik Namata", "Sanjay Gope", "Saroj Kumar Murmu"];
+            } else if (site === 'NBM') {
+                workers = [" Anurag Dhan", "Harish Singh Sardar", "Janmajay Kumar Singh", "Jay Narayan Singh", "Lakhan Purty", "Mahadeb Mahato", " Raj Kishore Patro", "Shiva Kumar Sahare","Vicky Kumar Mishra" ];
+            } else if (site === 'R&D SCS') {
+                workers = ["Arjun Gope", "Devendra Kumar Singh", "Ekadashi Sen","Jadu Mandal", "Lallu Kumar", "Laxmikant Choudhary", "Niranjan Gope", "Rahit Ghatuary", "Rajendar Kumar Rajak", "Sunil Mishra"];
+            }
+
+            if (workers.length > 0) {
+                let table = '<table><tr><th>Name</th><th>Attendance</th><th>PPE Worn</th></tr>';
+                workers.forEach(worker => {
+                    table += `<tr>
+                                <td>${worker}</td>
+                                <td><input type="checkbox" class="attendance"></td>
+                                <td><input type="checkbox" class="ppe"></td>
+                              </tr>`;
+                });
+                table += '</table>';
+                workerList.innerHTML = table;
+            }
+        }
+
+        document.getElementById('site').addEventListener('change', loadWorkers);
+
+        function submitForm() {
+            const date = document.getElementById('date').value;
+            const site = document.getElementById('site').value;
+            const toolboxPdf = document.getElementById('toolbox_pdf').files.length;
+            const workPermitPdf = document.getElementById('work_permit_pdf').files.length;
+
+            if (!date || !site || !toolboxPdf || !workPermitPdf) {
+                alert('Please fill in all required fields and upload the necessary files.');
+                return;
+            }
+
+            alert('Form submitted successfully! Your submission is complete. Thank you for your response!');
+        }
+    </script>
+</body>
+</html>
